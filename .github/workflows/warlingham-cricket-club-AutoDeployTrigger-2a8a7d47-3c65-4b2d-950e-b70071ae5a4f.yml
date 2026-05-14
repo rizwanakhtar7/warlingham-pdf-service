@@ -35,15 +35,8 @@ jobs:
         uses: azure/container-apps-deploy-action@v2
         with:
           appSourcePath: ${{ github.workspace }}
-          _dockerfilePathKey_: _dockerfilePath_
-          _targetLabelKey_: _targetLabel_
-          registryUrl: 
-          registryUsername: ${{ secrets.WARLINGHAMCRICKETCLUB_REGISTRY_USERNAME }}
-          registryPassword: ${{ secrets.WARLINGHAMCRICKETCLUB_REGISTRY_PASSWORD }}
-          containerAppName: warlingham-cricket-club
+          _dockerfilePathKey_: Dockerfile
+          containerAppName: warlinghamcricket-pdf-service
           resourceGroup: warlingham-club
-          imageToBuild: default/[parameters('containerAppName')]:${{ github.sha }}
-          _buildArgumentsKey_: |
-            _buildArgumentsValues_
 
 

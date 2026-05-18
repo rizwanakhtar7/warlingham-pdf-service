@@ -8,6 +8,12 @@ RUN dotnet publish warlinghamcc.PdfService.csproj -c Release -o /app/publish
 
 FROM mcr.microsoft.com/playwright/dotnet:v1.59.0-jammy
 
+# Install emoji fonts
+RUN apt-get update && apt-get install -y \
+    fonts-noto-color-emoji \
+    fontconfig \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 COPY --from=build /app/publish .
 

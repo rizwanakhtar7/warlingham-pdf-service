@@ -74,7 +74,7 @@ await page.EvaluateAsync("""
             twemoji.parse(document.body, {
                 folder: 'svg',
                 ext: '.svg',
-                base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'
+                base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@16.0.1/assets/'
             });
         }
 

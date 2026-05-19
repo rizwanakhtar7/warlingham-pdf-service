@@ -11,7 +11,7 @@ public class NewsletterPdfHtmlService
         html = RemoveDangerousTags(html);
         html = EnsureHtmlDocument(html, title);
         html = MakeLinksAndAssetsAbsolute(html, baseUrl);
-        html = ReplaceEmojisForPdf(html);
+        //html = ReplaceEmojisForPdf(html);
         html = StripPlayerSpotlightForPdf(html);
         html = InjectPrintCss(html);
 

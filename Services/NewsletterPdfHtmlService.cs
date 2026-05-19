@@ -12,7 +12,11 @@ public class NewsletterPdfHtmlService
         html = EnsureHtmlDocument(html, title);
         html = MakeLinksAndAssetsAbsolute(html, baseUrl);
         //html = ReplaceEmojisForPdf(html);
+
+        
         html = StripPlayerSpotlightForPdf(html);
+
+        html = InjectTwemojiSupport(html);
         html = InjectPrintCss(html);
 
         return html;

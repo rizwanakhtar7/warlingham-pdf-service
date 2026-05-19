@@ -18,6 +18,33 @@ public class NewsletterPdfHtmlService
         return html;
     }
 
+    private static string InjectTwemojiSupport(string html)
+        {
+            const string twemojiScript = """
+            <script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js"></script>
+            <style>
+              img.emoji {
+                display: inline-block !important;
+                width: 1em !important;
+                height: 1em !important;
+                margin: 0 .05em 0 .1em !important;
+                vertical-align: -0.12em !important;
+              }
+            </style>
+            """;
+        
+            if (html.Contains("</head>", StringComparison.OrdinalIgnoreCase))
+            {
+                return System.Text.RegularExpressions.Regex.Replace(
+                    html,
+                    "</head>",
+                    twemojiScript + "</head>",
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                );
+            }
+        
+            return twemojiScript + html;
+        }
     private static string EnsureHtmlDocument(string html, string title)
     {
         if (Regex.IsMatch(html, "<html[\\s>]", RegexOptions.IgnoreCase))

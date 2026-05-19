@@ -62,34 +62,44 @@ public class PlaywrightPdfService : IPlaywrightPdfService, IAsyncDisposable
 
             var fullHtml = _htmlService.PrepareHtml(html, title, baseUrl);
 
-            await page.SetContentAsync(fullHtml, new PageSetContentOptions
-            {
-                WaitUntil = WaitUntilState.Load,
-                Timeout = 30000
+await page.SetContentAsync(fullHtml, new PageSetContentOptions
+{
+    WaitUntil = WaitUntilState.NetworkIdle,
+    Timeout = 30000
+});
+
+await page.EvaluateAsync("""
+    async () => {
+        if (window.twemoji) {
+            twemoji.parse(document.body, {
+                folder: 'svg',
+                ext: '.svg',
+                base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'
             });
+        }
 
-            await page.EvaluateAsync(@"() => {
-                return Promise.all(
-                    Array.from(document.images).map(img => {
-                        if (img.complete && img.naturalWidth > 0) {
-                            return Promise.resolve();
-                        }
+        const images = Array.from(document.images);
 
-                        return new Promise(resolve => {
-                            img.onload = resolve;
-                            img.onerror = resolve;
-                        });
-                    })
-                ).then(() => {
-                    Array.from(document.querySelectorAll('a[href]')).forEach(a => {
-                        a.style.display = 'inline-block';
-                        a.setAttribute('target', '_blank');
-                        a.setAttribute('rel', 'noopener noreferrer');
-                    });
-                });
-            }");
+        await Promise.all(images.map(img => {
+            if (img.complete && img.naturalWidth > 0) {
+                return Promise.resolve();
+            }
 
-            await page.WaitForTimeoutAsync(500);
+            return new Promise(resolve => {
+                img.onload = resolve;
+                img.onerror = resolve;
+            });
+        }));
+
+        Array.from(document.querySelectorAll('a[href]')).forEach(a => {
+            a.style.display = 'inline-block';
+            a.setAttribute('target', '_blank');
+            a.setAttribute('rel', 'noopener noreferrer');
+        });
+    }
+""");
+
+await page.WaitForTimeoutAsync(500);
 
             var pdfBytes = await page.PdfAsync(new PagePdfOptions
             {

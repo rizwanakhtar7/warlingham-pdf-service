@@ -25,7 +25,7 @@ public class NewsletterPdfHtmlService
     private static string InjectTwemojiSupport(string html)
         {
             const string twemojiScript = """
-            <script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/twemoji@16.0.1/dist/twemoji.min.js"></script>
             <style>
               img.emoji {
                 display: inline-block !important;

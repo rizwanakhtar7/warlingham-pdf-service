@@ -75,6 +75,41 @@ if (app.Environment.IsDevelopment() || builder.Configuration.GetValue<bool>("Pdf
 app.UseHttpsRedirection();
 app.UseCors("FrontendOnly");
 
+// add some config for api key check
+app.Use(async (context, next) =>
+{
+    var enableApiKey = builder.Configuration.GetValue<bool>("Pdf:EnableApiKey", true);
+
+    if (!enableApiKey)
+    {
+        await next();
+        return;
+    }
+
+    var configuredApiKey = builder.Configuration["Pdf:ApiKey"];
+    var requestApiKey = context.Request.Headers["X-API-KEY"].FirstOrDefault();
+
+    if (string.IsNullOrWhiteSpace(configuredApiKey))
+    {
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        await context.Response.WriteAsync("PDF API key is not configured.");
+        return;
+    }
+
+    if (string.IsNullOrWhiteSpace(requestApiKey) ||
+        !string.Equals(requestApiKey, configuredApiKey, StringComparison.Ordinal))
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        await context.Response.WriteAsync("Invalid API key.");
+        return;
+    }
+
+    await next();
+});
+
+
+// end of api key config check
+
 app.UseRateLimiter();
 app.MapControllers();
 

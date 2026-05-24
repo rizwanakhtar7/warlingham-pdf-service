@@ -78,6 +78,11 @@ app.UseCors("FrontendOnly");
 // add some config for api key check
 app.Use(async (context, next) =>
 {
+    if (HttpMethods.IsOptions(context.Request.Method))
+    {
+        await next();
+        return;
+    }
     var enableApiKey = builder.Configuration.GetValue<bool>("Pdf:EnableApiKey", true);
 
     if (!enableApiKey)
